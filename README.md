@@ -1,7 +1,7 @@
 ##################################################
 #####             引用APP包                  #####
 ##################################################
-一：授权码模式
+###一：授权码模式
     1：URL： http://localhost:8080/oauth/authorize?client_id=imooc&response_type=code&redirect_uri=http://www.baidu.com
     2：输入账号密码登录系统
     3：点击授权按钮
@@ -19,7 +19,7 @@
             "jti": "bf149f3a-b375-42fa-8838-0a0a451d0d4d"
         }
            
-二：使用imagecode token的形式
+###二：使用imagecode token的形式
     1：URL http://localhost:8080/code/image?width=100  
         headers:  deviceId=xxx    一定要带上设备ID
     2：根据获取到的图片验证码换token
@@ -41,7 +41,7 @@
             "scope": "all"
         }
 
-三：使用smsCode token的形式
+###三：使用smsCode token的形式
     1：URL http://127.0.0.1:8080/code/sms?mobile=18102460000
         headers:
                 deviceId=xxx
