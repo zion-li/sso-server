@@ -27,7 +27,7 @@ public class TokenStoreConfig {
     private RedisConnectionFactory redisConnectionFactory;
 
     @Bean
-    @ConditionalOnProperty(prefix = "security-properties.oauth2", name = "storeType", havingValue = "redis", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "security-properties.oauth2", name = "storeType", havingValue = "redis")
     public TokenStore redisTokenStore() {
         return new RedisTokenStore(redisConnectionFactory);
     }
@@ -39,7 +39,7 @@ public class TokenStoreConfig {
      * matchIfMissing true 默认下面的类是生效的
      */
     @Configuration
-    @ConditionalOnProperty(prefix = "security-properties.oauth2", name = "storeType", havingValue = "jwt")
+    @ConditionalOnProperty(prefix = "security-properties.oauth2", name = "storeType", havingValue = "jwt", matchIfMissing = true)
     public static class JwtTokenConfig {
 
         @Autowired

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,6 +33,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthorizeConfigManager authorizeConfigManager;
 
+    @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
+
     @Override
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
@@ -46,6 +50,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
         http.apply(validateCodeSecurityConfig)
             .and()
             .apply(smsCodeAuthenticationSecurityConfig)
+            .and()
+            .logout()
+            .logoutSuccessHandler(logoutSuccessHandler)
             .and()
             .csrf().disable();
 
