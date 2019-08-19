@@ -23,7 +23,7 @@ import java.io.IOException;
 @RestController
 public class AppSecurityController {
 
-    @RequestMapping(SecurityConstants.APP_DEFAULT_UNAUTHENTICATION_URL)
+    @RequestMapping(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     public ApiResponse requireAuthentication(HttpServletRequest request, HttpServletResponse response)
         throws IOException {
