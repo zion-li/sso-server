@@ -25,7 +25,8 @@ security-properties:
       clients[0]:
         clientId: imooc
         clientSecret: imoocsecret
-        accessTokenValiditySeconds: 72000
+        accessTokenValiditySeconds: 60
+        refreshTokenValiditySeconds:120
         redirectUris: http://www.baidu.com
       clients[1]:
         clientId: bfd
