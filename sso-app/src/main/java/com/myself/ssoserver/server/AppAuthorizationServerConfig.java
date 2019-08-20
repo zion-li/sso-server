@@ -96,6 +96,7 @@ public class AppAuthorizationServerConfig extends AuthorizationServerConfigurerA
                     .secret(bCryptPasswordEncoder.encode(config.getClientSecret()))
                     .accessTokenValiditySeconds(config.getAccessTokenValiditySeconds())
                     .authorizedGrantTypes("refresh_token", "authorization_code", "password")
+                    .refreshTokenValiditySeconds(config.getRefreshTokenValiditySeconds())
                     .redirectUris(config.getRedirectUris())
                     .scopes("all");
             }
