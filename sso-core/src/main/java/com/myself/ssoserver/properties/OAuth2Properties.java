@@ -12,7 +12,7 @@ public class OAuth2Properties {
     /**
      * 使用jwt时为token签名的秘钥
      */
-    private String jwtSigningKey = "Aa123hREDDFexitTr3etBe7rdf8ayY1@iHEF18a^409df$%&aSFDSFDiefrs";
+    private String jwtSigningKey = "Aa123hTr3etBe7rdf8f$%&aSFaDS+Fs";
 
     /**
      * 客户端配置
