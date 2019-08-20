@@ -1,7 +1,7 @@
 ##################################################
 #####             引用APP包                  #####
 ##################################################
-###一：授权码模式
+###一：授权码模式（因为使用的自定义登录，修改了登录页面，所以这个就不能用了哦）
     1：URL： http://localhost:8080/oauth/authorize?client_id=imooc&response_type=code&redirect_uri=http://www.baidu.com
     2：输入账号密码登录系统
     3：点击授权按钮
@@ -62,3 +62,22 @@
            "expires_in": 71999,
            "scope": "all"
        }
+       
+###四：令牌刷新（无感知获）
+    1：URL http://localhost:8080/oauth/token
+         headers:
+            Authorization: Basic aW1vb2M6aW1vb2NzZWNyZXQ=   (client-id:client-secret basic64加密)
+         body:
+            grant_type:refresh_token
+            refresh_token:XXX(秘钥获取的refresh_token的值)
+            scope:all
+    2：返回新的token
+        {
+            "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxODEwMjQ2NjMzMCIsInNjb3BlIjpbImFsbCJdLCJjb21wYW55IjoiYmZkIiwiZXhwIjoxNTY2MTcxNTc3LCJhdXRob3JpdGllcyI6WyJ4eHgiXSwianRpIjoiYzFmNTM3MDMtMWE3MS00NjE1LWJjODItNTc1NDg0YTMxYjFkIiwiY2xpZW50X2lkIjoiaW1vb2MifQ.7Op9RzyPKQF-TKLNyVRyssufoLvC0KxopsxViCG2vvc",
+            "token_type": "bearer",
+            "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxODEwMjQ2NjMzMCIsInNjb3BlIjpbImFsbCJdLCJhdGkiOiJjMWY1MzcwMy0xYTcxLTQ2MTUtYmM4Mi01NzU0ODRhMzFiMWQiLCJjb21wYW55IjoiYmZkIiwiZXhwIjoxNTY4NjkxMzM3LCJhdXRob3JpdGllcyI6WyJ4eHgiXSwianRpIjoiM2UzZDdlYmUtZGVjZi00ZWY5LTk4ZTQtZmY0MmZhMWEyYzk5IiwiY2xpZW50X2lkIjoiaW1vb2MifQ.z1SKhhBMAnH3oXc8llYNcXfRTeHaFKtipAJ-LbAuhYU",
+            "expires_in": 71999,
+            "scope": "all",
+            "company": "bfd",
+            "jti": "c1f53703-1a71-4615-bc82-575484a31b1d"
+        }
