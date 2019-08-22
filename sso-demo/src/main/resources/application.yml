@@ -10,27 +10,18 @@ security-properties:
     sms:
       length: 6
       expireIn: 120
-      # url:
-    social:
-      filterProcessesUrl:
-      qq:
-        appId:
-        appSecret:
-        providerId: qq
-      weChat:
-         appId:
-         appSecret:
-         providerId: qq
   oauth2:
       clients[0]:
         clientId: imooc
         clientSecret: imoocsecret
-        accessTokenValiditySeconds: 60
-        refreshTokenValiditySeconds:120
+        accessTokenValiditySeconds: 600
+        refreshTokenValiditySeconds: 1200
         redirectUris: http://www.baidu.com
       clients[1]:
         clientId: bfd
         clientSecret: bfdsecret
+        accessTokenValiditySeconds: 600
+        refreshTokenValiditySeconds: 1200
         redirectUris: http://www.baidu.com
 #      storeType: redis
 
