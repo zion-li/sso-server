@@ -1,17 +1,23 @@
 package com.myself.ssoserver.app.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myself.ssoserver.app.service.CustomerLoginLogService;
+import com.myself.ssoserver.properties.SecurityConstants;
+import com.myself.ssoserver.util.IpUtil;
+import com.myself.ssoserver.validate.ValidateCodeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnapprovedClientAuthenticationException;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -37,6 +43,9 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
 
     private String credentialsCharset = "UTF-8";
 
+    @Autowired
+    private TokenStore tokenStore;
+
     @Autowired(required = false)
     private JwtAccessTokenConverter jwtAccessTokenConverter;
 
@@ -52,12 +61,21 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
     @Autowired
     private AuthorizationServerTokenServices authorizationServerTokenServices;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private ValidateCodeRepository sessionStrategy;
+
+    @Autowired
+    private CustomerLoginLogService customerLoginLogService;
+
     /**
-     * 登录成功的处理,不用关心是redis还是token，会根据AuthorizationServerEndpointsConfigurer中配置的自动装配
+     * 登录成功的处理
      *
      * @param request
      * @param response
-     * @param authentication 封装认证信息，包括请求信息，认证通过之后的 UserDetails中封装的信息
+     * @param authentication
      * @throws IOException
      * @throws ServletException
      */
@@ -85,15 +103,14 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         if (clientDetails == null) {
             throw new UnapprovedClientAuthenticationException("clientId:" + clientId + " 对应信息不存在");
-        } else if (!StringUtils.equals(clientDetails.getClientSecret(), clientSecret)) {
+        } else if (!bCryptPasswordEncoder.matches(clientSecret, clientDetails.getClientSecret())) {
             throw new UnapprovedClientAuthenticationException("clientSecret不匹配" + clientId);
         }
 
         //2:构建TokenRequest
         //map是存储authentication内属性的,因为我们这里自带authentication,所以传空map即可
         //grantType是我们除了4中标准的授权模式之外自定义的一种
-        TokenRequest tokenRequest = new TokenRequest(MapUtils.EMPTY_MAP, clientId,
-            clientDetails.getScope(), "custom");
+        TokenRequest tokenRequest = new TokenRequest(MapUtils.EMPTY_MAP, clientId, clientDetails.getScope(), "custom");
 
         //3:构建Oauth2Request
         OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
@@ -103,6 +120,19 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
 
         //5：通过认证获取令牌(DefaultTokenServices)
         OAuth2AccessToken token = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
+
+        //6：记录用户登录信息
+        if (StringUtils.equals(request.getRequestURI(), SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_FORM)) {
+            String username = request.getParameter("username");
+            if (StringUtils.isNotBlank(username)) {
+                customerLoginLogService.recordLoginSuccess(request.getRequestURI(), username, IpUtil.getIpAddr(request));
+            }
+        } else if (StringUtils.equals(request.getRequestURI(), SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_MOBILE)) {
+            String mobile = request.getParameter(SecurityConstants.DEFAULT_PARAMETER_NAME_MOBILE);
+            if (StringUtils.isNotBlank(mobile)) {
+                customerLoginLogService.recordLoginSuccess(request.getRequestURI(), mobile, IpUtil.getIpAddr(request));
+            }
+        }
 
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(token));
