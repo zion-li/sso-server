@@ -42,7 +42,7 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
     /**
      * 密码
      */
-    private String password;
+    private transient String password;
     /**
      * 头像
      */
