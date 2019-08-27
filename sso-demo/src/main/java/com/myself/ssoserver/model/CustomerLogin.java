@@ -1,7 +1,9 @@
 package com.myself.ssoserver.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.google.common.collect.Sets;
 import com.myself.ssoserver.util.CalendarUtil;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +28,7 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
      * 用户ID
      */
     @TableId
-    private Integer customerId;
+    private Long customerId;
     /**
      * 用户登陆名
      */
@@ -64,9 +66,38 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
     /**
      * 权限
      */
+    @TableField(exist = false)
     private final Set<GrantedAuthority> authorities;
 
-    public CustomerLogin(Integer customerId, String username, String mobilePhone, String nickname, String password, String icon, Integer userStats, Date modifiedTime, Integer errorsCounts, Collection<? extends GrantedAuthority> authorities) {
+
+    public CustomerLogin(Long customerId, String username, String mobilePhone, String nickname, String password) {
+        this.customerId = customerId;
+        this.username = username;
+        this.mobilePhone = mobilePhone;
+        this.nickname = nickname;
+        this.password = password;
+        this.authorities = Sets.newHashSet();
+    }
+
+    public CustomerLogin(Long customerId, String username, String mobilePhone, String nickname, String password, String icon, Integer userStats, Date modifiedTime, Integer errorsCounts) {
+
+        if (((username == null) || "".equals(username)) || (password == null)) {
+            throw new IllegalArgumentException(
+                "Cannot pass null or empty values to constructor");
+        }
+        this.customerId = customerId;
+        this.username = username;
+        this.mobilePhone = mobilePhone;
+        this.nickname = nickname;
+        this.password = password;
+        this.icon = icon;
+        this.userStats = userStats;
+        this.modifiedTime = modifiedTime;
+        this.errorsCounts = errorsCounts;
+        this.authorities = Sets.newHashSet();
+    }
+
+    public CustomerLogin(Long customerId, String username, String mobilePhone, String nickname, String password, String icon, Integer userStats, Date modifiedTime, Integer errorsCounts, Collection<? extends GrantedAuthority> authorities) {
 
         if (((username == null) || "".equals(username)) || (password == null)) {
             throw new IllegalArgumentException(

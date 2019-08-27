@@ -1,16 +1,15 @@
 package com.myself.ssoserver.security;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.myself.ssoserver.mapper.CustomerLoginMapper;
 import com.myself.ssoserver.model.CustomerLogin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 
 /**
@@ -24,6 +23,9 @@ public class DemoUserDetailsService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CustomerLoginMapper customerLoginMapper;
 
 
     @Override
@@ -39,11 +41,12 @@ public class DemoUserDetailsService implements UserDetailsService {
      * @return
      */
     private UserDetails buildUser(String userId) {
-        //根据查找到的用户信息判断用户是否被冻结
-        String password = passwordEncoder.encode("123456");
-        log.info("数据库密码是:" + password);
-        return new CustomerLogin(1, "root", "18102466330", "你大爷", password, null,
-            1, new Date(), 0, AuthorityUtils.commaSeparatedStringToAuthorityList("xxx"));
+        QueryWrapper<CustomerLogin> queryWrapper = new QueryWrapper<>();
+        queryWrapper
+            .select("customer_id", "username", "mobile_phone", "nickname","password")
+            .lambda()
+            .or(obj1 -> obj1.eq(CustomerLogin::getUsername, userId))
+            .or(obj2 -> obj2.eq(CustomerLogin::getMobilePhone, userId));
+        return customerLoginMapper.selectOne(queryWrapper);
     }
-
 }
