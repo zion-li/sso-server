@@ -61,7 +61,7 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
     /**
      * 失败次数
      */
-    private Integer errorsCounts;
+    private Integer errorCounts;
 
     /**
      * 权限
@@ -93,7 +93,7 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
         this.icon = icon;
         this.userStats = userStats;
         this.modifiedTime = modifiedTime;
-        this.errorsCounts = errorsCounts;
+        this.errorCounts = errorsCounts;
         this.authorities = Sets.newHashSet();
     }
 
@@ -111,7 +111,7 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
         this.icon = icon;
         this.userStats = userStats;
         this.modifiedTime = modifiedTime;
-        this.errorsCounts = errorsCounts;
+        this.errorCounts = errorsCounts;
         this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
     }
 
@@ -162,7 +162,7 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
      */
     @Override
     public boolean isEnabled() {
-        if (this.errorsCounts > 5 && CalendarUtil.isToday(this.modifiedTime)) {
+        if (this.errorCounts > 5 && CalendarUtil.isToday(this.modifiedTime)) {
             return false;
         }
         return true;
