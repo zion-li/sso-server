@@ -1,6 +1,7 @@
 package com.myself.ssoserver.security;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.myself.ssoserver.app.AppSecretException;
 import com.myself.ssoserver.mapper.CustomerLoginMapper;
 import com.myself.ssoserver.model.CustomerLogin;
 import lombok.extern.slf4j.Slf4j;
@@ -43,10 +44,14 @@ public class DemoUserDetailsService implements UserDetailsService {
     private UserDetails buildUser(String userId) {
         QueryWrapper<CustomerLogin> queryWrapper = new QueryWrapper<>();
         queryWrapper
-            .select("customer_id", "username", "mobile_phone", "nickname","password")
+            .select("customer_id", "username", "mobile_phone", "nickname", "password")
             .lambda()
             .or(obj1 -> obj1.eq(CustomerLogin::getUsername, userId))
             .or(obj2 -> obj2.eq(CustomerLogin::getMobilePhone, userId));
-        return customerLoginMapper.selectOne(queryWrapper);
+        CustomerLogin customerLogin = customerLoginMapper.selectOne(queryWrapper);
+        if (customerLogin == null) {
+            throw new AppSecretException("当前用户不存在");
+        }
+        return customerLogin;
     }
 }
