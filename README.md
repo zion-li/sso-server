@@ -81,3 +81,18 @@
             "company": "bfd",
             "jti": "c1f53703-1a71-4615-bc82-575484a31b1d"
         }
+        
+###令牌校验：        
+        http://localhost:8080/oauth/check_token?token=8ba4ae7b-5312-4442-84d8-d768bd32cb9c
+        {
+            "active": true,
+            "exp": 1566885061,
+            "user_name": "root",
+            "authorities": [
+                "xxx"
+            ],
+            "client_id": "imooc",
+            "scope": [
+                "all"
+            ]
+        }
