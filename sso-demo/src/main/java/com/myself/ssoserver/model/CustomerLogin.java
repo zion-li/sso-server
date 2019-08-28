@@ -69,22 +69,7 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
     @TableField(exist = false)
     private final Set<GrantedAuthority> authorities;
 
-
-    public CustomerLogin(Long customerId, String username, String mobilePhone, String nickname, String password) {
-        this.customerId = customerId;
-        this.username = username;
-        this.mobilePhone = mobilePhone;
-        this.nickname = nickname;
-        this.password = password;
-        this.authorities = Sets.newHashSet();
-    }
-
     public CustomerLogin(Long customerId, String username, String mobilePhone, String nickname, String password, String icon, Integer userStats, Date modifiedTime, Integer errorsCounts) {
-
-        if (((username == null) || "".equals(username)) || (password == null)) {
-            throw new IllegalArgumentException(
-                "Cannot pass null or empty values to constructor");
-        }
         this.customerId = customerId;
         this.username = username;
         this.mobilePhone = mobilePhone;
@@ -98,11 +83,6 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
     }
 
     public CustomerLogin(Long customerId, String username, String mobilePhone, String nickname, String password, String icon, Integer userStats, Date modifiedTime, Integer errorsCounts, Collection<? extends GrantedAuthority> authorities) {
-
-        if (((username == null) || "".equals(username)) || (password == null)) {
-            throw new IllegalArgumentException(
-                "Cannot pass null or empty values to constructor");
-        }
         this.customerId = customerId;
         this.username = username;
         this.mobilePhone = mobilePhone;
@@ -142,7 +122,7 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
      */
     @Override
     public boolean isAccountNonLocked() {
-        return this.userStats == 1;
+        return !(this.errorCounts > 5 && CalendarUtil.isToday(this.modifiedTime));
     }
 
     /**
@@ -162,10 +142,7 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
      */
     @Override
     public boolean isEnabled() {
-        if (this.errorCounts > 5 && CalendarUtil.isToday(this.modifiedTime)) {
-            return false;
-        }
-        return true;
+        return this.userStats == 1;
     }
 
 

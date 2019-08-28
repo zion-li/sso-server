@@ -10,11 +10,19 @@ public interface CustomerLoginLogService {
 
     /**
      * 记录成功登录操作信息
+     *
+     * @param url    访问URL
+     * @param userId 用户标识（username or mobilePhone）
+     * @param ip     IP地址
      */
-    void recordLoginSuccess(String url, String username, String ip);
+    void recordLoginSuccess(String url, String userId, String ip);
 
     /**
      * 记录失败登录登录操作信息
+     *
+     * @param url    访问URL
+     * @param userId 用户标识（username or mobilePhone）
+     * @param ip     IP地址
      */
-    void recordLoginerror(String url, String username, String ip);
+    void recordLoginError(String url, String userId, String ip);
 }

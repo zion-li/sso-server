@@ -43,12 +43,12 @@ public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailure
         if (StringUtils.equals(request.getRequestURI(), SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_FORM)) {
             String username = request.getParameter("username");
             if (StringUtils.isNotBlank(username)) {
-                customerLoginLogService.recordLoginerror(request.getRequestURI(), username, IpUtil.getIpAddr(request));
+                customerLoginLogService.recordLoginError(request.getRequestURI(), username, IpUtil.getIpAddr(request));
             }
         } else if (StringUtils.equals(request.getRequestURI(), SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_MOBILE)) {
             String mobile = request.getParameter(SecurityConstants.DEFAULT_PARAMETER_NAME_MOBILE);
             if (StringUtils.isNotBlank(mobile)) {
-                customerLoginLogService.recordLoginerror(request.getRequestURI(), mobile, IpUtil.getIpAddr(request));
+                customerLoginLogService.recordLoginError(request.getRequestURI(), mobile, IpUtil.getIpAddr(request));
             }
         }
 

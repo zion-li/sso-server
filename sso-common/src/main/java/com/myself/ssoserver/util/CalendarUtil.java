@@ -2,6 +2,7 @@ package com.myself.ssoserver.util;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * @author Created by zion
@@ -12,7 +13,8 @@ public class CalendarUtil {
     private static Calendar c = Calendar.getInstance();
 
     public static boolean isToday(Date inputDate) {
-        Date now = new Date(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
-        return inputDate.after(now);
+        long current = System.currentTimeMillis();
+        long zero = current - (current + TimeZone.getDefault().getRawOffset()) % 86400000;
+        return inputDate.getTime() > zero;
     }
 }

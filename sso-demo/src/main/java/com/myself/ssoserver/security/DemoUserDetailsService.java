@@ -44,7 +44,7 @@ public class DemoUserDetailsService implements UserDetailsService {
     private UserDetails buildUser(String userId) {
         QueryWrapper<CustomerLogin> queryWrapper = new QueryWrapper<>();
         queryWrapper
-            .select("customer_id", "username", "mobile_phone", "nickname", "password")
+            .select("customer_id", "username", "mobile_phone", "nickname", "password", "icon", "user_stats", "modified_time", "error_counts")
             .lambda()
             .or(obj1 -> obj1.eq(CustomerLogin::getUsername, userId))
             .or(obj2 -> obj2.eq(CustomerLogin::getMobilePhone, userId));
