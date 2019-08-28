@@ -123,7 +123,7 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
 
         //6：记录用户登录信息
         if (StringUtils.equals(request.getRequestURI(), SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_FORM)) {
-            String username = request.getParameter("username");
+            String username = request.getParameter(SecurityConstants.DEFAULT_PARAMETER_NAME_USERNAME);
             if (StringUtils.isNotBlank(username)) {
                 customerLoginLogService.recordLoginSuccess(request.getRequestURI(), username, IpUtil.getIpAddr(request));
             }
