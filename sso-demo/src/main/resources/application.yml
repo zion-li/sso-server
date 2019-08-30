@@ -9,7 +9,7 @@ security-properties:
       height: 32
       length: 6
       expireIn: 120
-      # url:
+      url: /customer/sendMsg
     sms:
       length: 6
       expireIn: 120

@@ -4,8 +4,6 @@ import com.myself.ssoserver.properties.SecurityConstants;
 import com.myself.ssoserver.validate.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.ServletRequestBindingException;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.Map;
@@ -49,7 +47,8 @@ public abstract class AbstractValidateCodeProcessor<C extends ValidateCode> impl
         return (C) validateCodeGenerator.generate(request);
     }
 
-    private ValidateCodeType getValidateCodeType() {
+    @Override
+    public ValidateCodeType getValidateCodeType() {
         String type = StringUtils.substringBefore(this.getClass().getSimpleName(), "ValidateCodeProcessor");
         return ValidateCodeType.valueOf(type.toUpperCase());
     }
@@ -81,19 +80,11 @@ public abstract class AbstractValidateCodeProcessor<C extends ValidateCode> impl
 
     @SuppressWarnings("unchecked")
     @Override
-    public void validate(ServletWebRequest request) {
+    public void validate(ServletWebRequest request, String codeInRequest) {
 
         ValidateCodeType processorType = getValidateCodeType();
         String sessionKey = getSessionKey();
         C codeInSession = (C) sessionStrategy.get(request, sessionKey);
-
-        String codeInRequest;
-        try {
-            codeInRequest = ServletRequestUtils.getStringParameter(request.getRequest(),
-                processorType.getParamNameOnValidate());
-        } catch (ServletRequestBindingException e) {
-            throw new ValidateCodeException("获取验证码的值失败");
-        }
 
         if (StringUtils.isBlank(codeInRequest)) {
             throw new ValidateCodeException(processorType + "验证码的值不能为空");

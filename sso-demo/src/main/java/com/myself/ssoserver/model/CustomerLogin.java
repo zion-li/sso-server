@@ -82,6 +82,18 @@ public class CustomerLogin extends Model<CustomerLogin> implements UserDetails {
         this.authorities = Sets.newHashSet();
     }
 
+    public CustomerLogin(Long customerId, String username, String mobilePhone, String nickname, String icon, Integer userStats, Date modifiedTime, Integer errorCounts) {
+        this.customerId = customerId;
+        this.username = username;
+        this.mobilePhone = mobilePhone;
+        this.nickname = nickname;
+        this.icon = icon;
+        this.userStats = userStats;
+        this.modifiedTime = modifiedTime;
+        this.errorCounts = errorCounts;
+        this.authorities = Sets.newHashSet();
+    }
+
     public CustomerLogin(Long customerId, String username, String mobilePhone, String nickname, String password, String icon, Integer userStats, Date modifiedTime, Integer errorsCounts, Collection<? extends GrantedAuthority> authorities) {
         this.customerId = customerId;
         this.username = username;

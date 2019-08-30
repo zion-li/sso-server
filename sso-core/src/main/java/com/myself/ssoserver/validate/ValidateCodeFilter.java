@@ -1,6 +1,8 @@
 package com.myself.ssoserver.validate;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.myself.ssoserver.properties.SecurityConstants;
 import com.myself.ssoserver.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,6 +21,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,20 +100,45 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
                                     FilterChain chain) throws ServletException, IOException {
 
         ValidateCodeType type = getValidateCodeType(request);
+        ValidateCodeRequestWrapper requestWrapper = null;
 
         if (type != null) {
-            log.info("校验请求(" + request.getRequestURI() + ")中的验证码,验证码类型" + type);
+            log.info("校验请求:(" + request.getRequestURI() + ") 中的验证码,验证码类型" + type);
+            ServletWebRequest servletWebRequest = new ServletWebRequest(request, response);
+            String parameterName = validateCodeProcessorHolder.findValidateCodeProcessor(type).getValidateCodeType().getParamNameOnValidate();
+            String codeInRequest;
+            try {
+                codeInRequest = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(), parameterName);
+
+                if (StringUtils.isBlank(codeInRequest)) {
+                    requestWrapper = new ValidateCodeRequestWrapper(request);
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader br = requestWrapper.getReader();
+                    String str;
+                    while ((str = br.readLine()) != null) {
+                        sb.append(str);
+                    }
+                    JSONObject jsonObject = JSON.parseObject(sb.toString());
+                    codeInRequest = (String) jsonObject.get(parameterName);
+                }
+            } catch (ServletRequestBindingException e) {
+                throw new ValidateCodeException(">>>>>获取验证码的值失败");
+            }
             try {
                 validateCodeProcessorHolder.findValidateCodeProcessor(type)
-                    .validate(new ServletWebRequest(request, response));
-                log.info("验证码校验通过");
+                    .validate(servletWebRequest, codeInRequest);
+                log.info(">>>>>验证码校验通过");
             } catch (ValidateCodeException e) {
                 authenticationFailureHandler.onAuthenticationFailure(request, response, e);
                 return;
             }
         }
 
-        chain.doFilter(request, response);
+        if (requestWrapper == null) {
+            chain.doFilter(request, response);
+        } else {
+            chain.doFilter(requestWrapper, response);
+        }
     }
 
     private ValidateCodeType getValidateCodeType(HttpServletRequest request) {

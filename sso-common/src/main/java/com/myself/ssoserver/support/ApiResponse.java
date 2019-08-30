@@ -52,7 +52,15 @@ public class ApiResponse {
         return new ApiResponse(StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getStandardMessage(), data);
     }
 
+    public static ApiResponse ofSuccess() {
+        return new ApiResponse();
+    }
+
     public static ApiResponse ofStatus(StatusEnum statusEnum) {
         return new ApiResponse(statusEnum.getCode(), statusEnum.getStandardMessage(), null);
+    }
+
+    public static Boolean isSuccess(ApiResponse apiResponse) {
+        return apiResponse.getCode() == StatusEnum.SUCCESS.getCode();
     }
 }

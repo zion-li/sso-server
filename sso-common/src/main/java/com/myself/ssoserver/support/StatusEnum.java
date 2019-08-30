@@ -20,7 +20,9 @@ public enum StatusEnum {
     SESSION_INVALIDATION(40003, "session失效"),
     BINDING_SUCCESS(40004, "绑定成功"),
     UNTIED_SUCCESS(40005, "解绑成功"),
-    NOT_LOGIN(50000, "没有登录");
+    NOT_LOGIN(50000, "没有登录"),
+    EXIST_MOBILE_PHONE(5001,"手机号已经存在"),
+    SEND_MSG_TOO_FAST(5002,"手机号已经存在");
 
     private int code;
     private String standardMessage;

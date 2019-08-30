@@ -1,4 +1,4 @@
-package com.myself.ssoserver.security;
+package com.myself.ssoserver.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.myself.ssoserver.app.AppSecretException;
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 /**
  * 用户对象
  *
- * @author zhailiang
+ * @author zion
  */
 @Slf4j
 @Component
-public class DemoUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
