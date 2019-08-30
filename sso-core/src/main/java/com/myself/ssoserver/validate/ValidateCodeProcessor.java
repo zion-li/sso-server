@@ -18,15 +18,18 @@ public interface ValidateCodeProcessor {
      */
     void create(ServletWebRequest request) throws Exception;
 
+
     /**
      * 校验验证码
      *
-     * @param servletWebRequest
-     * @throws Exception
+     * @param servletWebRequest servletWebRequest
+     * @param codeInRequest     用户输入code
      */
     void validate(ServletWebRequest servletWebRequest, String codeInRequest);
 
     /**
+     * 获取验证码分类
+     *
      * @return
      */
     ValidateCodeType getValidateCodeType();
